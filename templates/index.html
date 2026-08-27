@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>STUCHECK AI | Document Verification</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            color: #1e293b;
+        }
+
+        /* =========================
+           Header
+        ========================= */
+
+        header {
+            background: linear-gradient(135deg, #111827, #1e3a8a);
+            color: white;
+            padding: 28px 8%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        header h1 {
+            font-size: 34px;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            margin-top: 6px;
+            color: #cbd5e1;
+            font-size: 15px;
+        }
+
+        /* =========================
+           Main Container
+        ========================= */
+
+        .container {
+            max-width: 1000px;
+            margin: 45px auto;
+            padding: 0 20px 50px;
+        }
+
+        /* =========================
+           Main Card
+        ========================= */
+
+        .card {
+            background: white;
+            padding: 42px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.10);
+        }
+
+        .title-section {
+            text-align: center;
+        }
+
+        .title-section h2 {
+            font-size: 28px;
+            color: #0f172a;
+        }
+
+        .info {
+            margin-top: 10px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        /* =========================
+           Upload Box
+        ========================= */
+
+        .upload-box {
+            margin-top: 30px;
+            padding: 45px 25px;
+            border: 2px dashed #94a3b8;
+            border-radius: 18px;
+            text-align: center;
+            background: #f8fafc;
+            transition: 0.3s ease;
+        }
+
+        .upload-box:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-box h3 {
+            font-size: 20px;
+            color: #334155;
+        }
+
+        .upload-box p {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            margin: 25px auto;
+            display: block;
+            padding: 10px;
+            max-width: 100%;
+        }
+
+        /* =========================
+           Button
+        ========================= */
+
+        button {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.25s ease;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(37, 99, 235, 0.35);
+        }
+
+        /* =========================
+           Verification Report
+        ========================= */
+
+        .report {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8fafc;
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .report h2 {
+            color: #0f172a;
+            font-size: 23px;
+        }
+
+        /* =========================
+           Status Badge
+        ========================= */
+
+        .ai-badge {
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .success-badge {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .failed-badge {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        /* =========================
+           Report Rows
+        ========================= */
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 20px;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .value {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .match {
+            color: #15803d;
+            font-weight: 700;
+        }
+
+        .mismatch {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        /* =========================
+           Score
+        ========================= */
+
+        .score-box {
+            margin-top: 25px;
+            padding: 25px;
+            text-align: center;
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .score-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .score {
+            font-size: 38px;
+            font-weight: 800;
+            color: #1d4ed8;
+        }
+
+        /* =========================
+           Final Status
+        ========================= */
+
+        .verified {
+            margin-top: 20px;
+            text-align: center;
+            color: #166534;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 17px;
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            border-radius: 12px;
+        }
+
+        .not-verified {
+            margin-top: 20px;
+            text-align: center;
+            color: #991b1b;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 17px;
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 12px;
+        }
+
+        /* =========================
+           Error
+        ========================= */
+
+        .error {
+            margin-top: 25px;
+            padding: 16px;
+            color: #991b1b;
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* =========================
+           Footer
+        ========================= */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* =========================
+           Responsive
+        ========================= */
+
+        @media (max-width: 650px) {
+
+            header {
+                padding: 25px 20px;
+            }
+
+            header h1 {
+                font-size: 27px;
+            }
+
+            .container {
+                margin-top: 25px;
+                padding: 0 12px 30px;
+            }
+
+            .card {
+                padding: 25px 18px;
+            }
+
+            .title-section h2 {
+                font-size: 23px;
+            }
+
+            .upload-box {
+                padding: 35px 15px;
+            }
+
+            .row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 7px;
+            }
+
+            .value {
+                text-align: left;
+            }
+
+            .report-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header>
+
+        <div class="header-content">
+
+            <h1>STUCHECK AI</h1>
+
+            <p>
+                AI-Powered Student Document Verification System
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <div class="container">
+
+        <div class="card">
+
+
+            <!-- TITLE -->
+
+            <div class="title-section">
+
+                <h2>
+                    Student Document Verification
+                </h2>
+
+                <p class="info">
+                    Upload a marksheet and let STUCHECK AI
+                    analyze and verify student information.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 UPLOAD FORM
+            ========================== -->
+
+            <form method="POST" enctype="multipart/form-data">
+
+                <div class="upload-box">
+
+                    <div class="upload-icon">
+                        📄
+                    </div>
+
+                    <h3>
+                        Upload Marksheet
+                    </h3>
+
+                    <p>
+                        Supported formats: JPG, JPEG, PNG
+                    </p>
+
+                    <input
+                        type="file"
+                        name="document"
+                        accept="image/*"
+                        required
+                    >
+
+                    <button type="submit">
+                        🔍 VERIFY DOCUMENT
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- =========================
+                 VERIFICATION RESULT
+            ========================== -->
+
+            {% if result %}
+
+
+                <!-- ERROR -->
+
+                {% if result.status == "ERROR" %}
+
+                    <div class="error">
+
+                        ❌ {{ result.message }}
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <div class="report">
+
+
+                        <!-- REPORT HEADER -->
+
+                        <div class="report-header">
+
+                            <h2>
+                                Verification Report
+                            </h2>
+
+
+                            {% if result.verified %}
+
+                                <span class="ai-badge success-badge">
+                                    AI VERIFIED
+                                </span>
+
+                            {% else %}
+
+                                <span class="ai-badge failed-badge">
+                                    VERIFICATION FAILED
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =========================
+                             STUDENT NAME
+                        ========================== -->
+
+                        <div class="row">
+
+                            <span class="label">
+                                👤 Student Name
+                            </span>
+
+
+                            {% if result.name_match %}
+
+                                <span class="value match">
+                                    ✅ {{ result.name }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="value mismatch">
+                                    ❌ {{ result.name or "Not Found" }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =========================
+                             CERTIFICATE NUMBER
+                        ========================== -->
+
+                        <div class="row">
+
+                            <span class="label">
+                                🆔 Certificate Number
+                            </span>
+
+
+                            {% if result.certificate_match %}
+
+                                <span class="value match">
+                                    ✅ {{ result.certificate_no }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="value mismatch">
+                                    ❌ {{ result.certificate_no or "Not Found" }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =========================
+                             TOTAL MARKS
+                        ========================== -->
+
+                        <div class="row">
+
+                            <span class="label">
+                                📊 Total Marks
+                            </span>
+
+
+                            {% if result.marks_match %}
+
+                                <span class="value match">
+                                    ✅ {{ result.marks }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="value mismatch">
+                                    ❌ {{ result.marks or "Not Found" }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =========================
+                             RESULT
+                        ========================== -->
+
+                        <div class="row">
+
+                            <span class="label">
+                                🏆 Result
+                            </span>
+
+
+                            {% if result.result_match %}
+
+                                <span class="value match">
+                                    ✅ {{ result.student_result }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="value mismatch">
+                                    ❌ {{ result.student_result or "Not Found" }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =========================
+                             SCORE
+                        ========================== -->
+
+                        <div class="score-box">
+
+                            <div class="score-label">
+                                Overall Verification Score
+                            </div>
+
+                            <div class="score">
+                                {{ result.score }}%
+                            </div>
+
+                        </div>
+
+
+                        <!-- =========================
+                             FINAL STATUS
+                        ========================== -->
+
+                        {% if result.verified %}
+
+                            <div class="verified">
+
+                                🎉 DOCUMENT VERIFIED SUCCESSFULLY
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="not-verified">
+
+                                ❌ DOCUMENT NOT VERIFIED
+
+                            </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                {% endif %}
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        STUCHECK AI © 2026 |
+        AI-Based Student Document Verification System
+
+    </footer>
+
+
+</body>
+
+</html>

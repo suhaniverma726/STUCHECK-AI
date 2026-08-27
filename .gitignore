@@ -1,0 +1,20 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables / secrets
+.env
+
+# Uploaded student documents
+uploads/
+
+# Test images
+*.jpg
+*.jpeg
+*.png
+
+# VS Code
+.vscode/
